@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { SparklesCore } from "../../components/ui/sparkles";
 
-const page = () => {
+const Page = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -166,4 +166,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
