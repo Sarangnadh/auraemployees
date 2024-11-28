@@ -1,15 +1,14 @@
-import React from 'react'
+import React from 'react';
 
 const Page = () => {
   return (
-  
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-800 to-gray-900 text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-800 to-gray-900 text-white">
       <div className="w-full max-w-4xl mx-auto p-8 bg-black/60 backdrop-blur-md rounded-3xl shadow-lg">
         <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 text-indigo-300">
           Aura Help Desk
         </h1>
         <p className="text-center text-gray-300 mb-10">
-          Need assistance? We're here to help. Explore our resources, or connect
+          Need assistance? We&apos;re here to help. Explore our resources, or connect
           with support to resolve any issues quickly.
         </p>
 
@@ -32,8 +31,8 @@ const Page = () => {
           <div className="p-6 bg-gradient-to-r from-indigo-800 to-purple-700 rounded-2xl shadow-lg">
             <h2 className="text-2xl font-semibold mb-2">Submit a Ticket</h2>
             <p className="text-sm text-gray-300">
-              Can't find a solution? Submit a ticket to our support team, and
-              we'll assist you.
+              Can&apos;t find a solution? Submit a ticket to our support team, and
+              we&apos;ll assist you.
             </p>
             <a
               href="/support-ticket"
@@ -82,7 +81,7 @@ const Page = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page 
+export default Page;
