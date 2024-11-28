@@ -1,6 +1,6 @@
 import React from 'react'
 
-const page = () => {
+const Page = () => {
   return (
   
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-800 to-gray-900 text-white">
@@ -85,4 +85,4 @@ const page = () => {
   )
 }
 
-export default page 
+export default Page 
