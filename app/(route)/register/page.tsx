@@ -13,10 +13,11 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null); // Allow string or null
   const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
-  const handleSignUp = async (e:any) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(!name){
-      setError("Please Enter your Name");
+
+    if (!name) {
+      setError("Please enter your name.");
       return;
     }
     if (!validateEmail(email)) {
@@ -32,7 +33,7 @@ const Page = () => {
       return;
     }
     if (!designation) {
-      setError("Please select your designation");
+      setError("Please select your designation.");
       return;
     }
 
@@ -45,18 +46,18 @@ const Page = () => {
       designation,
       status,
     };
-  
+
     // Retrieve existing data from local storage
     const existingEmployees = JSON.parse(localStorage.getItem("employees") || "[]");
-  
+
     // Add new employee
     existingEmployees.push(employee);
-  
+
     // Save updated data back to local storage
     localStorage.setItem("employees", JSON.stringify(existingEmployees));
-  
+
     alert("Employee registered successfully!");
-    
+
     // Clear form fields
     setName("");
     setEmail("");
@@ -64,7 +65,7 @@ const Page = () => {
     setPassword("");
     setDesignation("");
     setStatus("active");
-  }
+  };
 
   return (
     <div className="w-full h-screen relative flex items-center justify-center bg-gray-900 text-white">
@@ -78,9 +79,7 @@ const Page = () => {
         particleColor="#FFFFFF"
       />
       <div className="relative z-10 w-[450px] p-8 bg-black/70 backdrop-blur-lg rounded-xl shadow-lg">
-        <h2 className="text-3xl font-semibold text-center mb-6">
-          Create an Account
-        </h2>
+        <h2 className="text-3xl font-semibold text-center mb-6">Create an Account</h2>
         {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
         <form onSubmit={handleSignUp} className="space-y-4">
           <input
