@@ -4,14 +4,15 @@ import Link from "next/link";
 import { SparklesCore } from "../../components/ui/sparkles";
 
 const Page = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
-  const [designation, setDesignation] = useState("");
-  const [status, setStatus] = useState("active");
-  const [error, setError] = useState<string | null>(null); // Allow string or null
-  const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [mobile, setMobile] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [designation, setDesignation] = useState<string>("");
+  const [status, setStatus] = useState<"active" | "inactive">("active");
+  const [error, setError] = useState<string | null>(null);
+
+  const validateEmail = (email: string): boolean => /\S+@\S+\.\S+/.test(email);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ const Page = () => {
     }
 
     setError(null);
+
     const employee = {
       name,
       email,
@@ -48,7 +50,9 @@ const Page = () => {
     };
 
     // Retrieve existing data from local storage
-    const existingEmployees = JSON.parse(localStorage.getItem("employees") || "[]");
+    const existingEmployees: Array<typeof employee> = JSON.parse(
+      localStorage.getItem("employees") || "[]"
+    );
 
     // Add new employee
     existingEmployees.push(employee);
