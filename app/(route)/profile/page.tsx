@@ -145,15 +145,23 @@ const ProfilePage = () => {
                 className="w-full px-4 py-2 rounded bg-gray-700 text-white"
                 required
               />
-              <input
-                type="text"
+              <select
                 name="designation"
                 value={formData.designation}
                 onChange={handleFormChange}
-                placeholder="Designation"
                 className="w-full px-4 py-2 rounded bg-gray-700 text-white"
                 required
-              />
+              >
+                <option value="" disabled>
+              Select Designation
+            </option>
+            <option value="Developer">Developer</option>
+            <option value="Designer">Designer</option>
+            <option value="Manager">Manager</option>
+            <option value="Teacher">Teacher</option>
+            <option value="other">Other</option>
+              </select>
+
               <select
                 name="status"
                 value={formData.status}
