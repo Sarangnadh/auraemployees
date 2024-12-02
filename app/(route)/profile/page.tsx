@@ -12,7 +12,13 @@ const ProfilePage = () => {
     }>
   >([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    mobile: string;
+    designation: string;
+    status: "active" | "inactive";
+  }>({
     name: "",
     email: "",
     mobile: "",
@@ -38,9 +44,14 @@ const ProfilePage = () => {
     setFormData(employees[index]);
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "status" ? (value as "active" | "inactive") : value,
+    }));
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
