@@ -58,7 +58,10 @@ const ProfilePage = () => {
     e.preventDefault();
     if (editIndex !== null) {
       const updatedEmployees = [...employees];
-      updatedEmployees[editIndex] = formData;
+      updatedEmployees[editIndex] = {
+        ...formData,
+        status: formData.status as "active" | "inactive", // Explicitly enforce type here
+      };
       setEmployees(updatedEmployees);
       localStorage.setItem("employees", JSON.stringify(updatedEmployees));
       alert("Profile updated successfully!");
