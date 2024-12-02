@@ -1,18 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const ProfilePage = () => {
-  const [employees, setEmployees] = useState<
-    Array<{
-      name: string;
-      email: string;
-      mobile: string;
-      designation: string;
-      status: "active" | "inactive";
-    }>
-  >([]);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [formData, setFormData] = useState<{
+  const [loggedInUser, setLoggedInUser] = useState<{
+    name: string;
+    email: string;
+    mobile: string;
+    designation: string;
+    status: "active" | "inactive";
+  } | null>(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedProfile, setEditedProfile] = useState<{
     name: string;
     email: string;
     mobile: string;
@@ -23,171 +23,187 @@ const ProfilePage = () => {
     email: "",
     mobile: "",
     designation: "",
-    status: "active",
+    status: "active", // Ensure the default value matches the union type
   });
 
+  const router = useRouter();
+
   useEffect(() => {
-    const storedEmployees = JSON.parse(localStorage.getItem("employees") || "[]");
-    setEmployees(storedEmployees);
-  }, []);
-
-  const handleDelete = (index: number) => {
-    const updatedEmployees = [...employees];
-    updatedEmployees.splice(index, 1);
-    setEmployees(updatedEmployees);
-    localStorage.setItem("employees", JSON.stringify(updatedEmployees));
-    alert("Employee deleted successfully!");
-  };
-
-  const handleEdit = (index: number) => {
-    setEditIndex(index);
-    setFormData(employees[index]);
-  };
-
-  const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "status" ? (value as "active" | "inactive") : value,
-    }));
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editIndex !== null) {
-      const updatedEmployees = [...employees];
-      updatedEmployees[editIndex] = {
-        ...formData,
-        status: formData.status as "active" | "inactive", // Explicitly enforce type here
-      };
-      setEmployees(updatedEmployees);
-      localStorage.setItem("employees", JSON.stringify(updatedEmployees));
-      alert("Profile updated successfully!");
-      setEditIndex(null);
+    const user = JSON.parse(sessionStorage.getItem("loggedInUser") || "null");
+    if (!user) {
+      alert("You need to log in to view your profile.");
+      router.push("/login");
+    } else {
+      setLoggedInUser(user);
+      setEditedProfile(user);
     }
+  }, [router]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("loggedInUser");
+    alert("Logged out successfully!");
+    router.push("/login");
   };
+
+  const handleDelete = () => {
+    const employees = JSON.parse(localStorage.getItem("employees") || "[]");
+    const updatedEmployees = employees.filter(
+      (emp: any) => emp.email !== loggedInUser?.email
+    );
+    localStorage.setItem("employees", JSON.stringify(updatedEmployees));
+    sessionStorage.removeItem("loggedInUser");
+    alert("Profile deleted successfully!");
+    router.push("/login");
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    const employees = JSON.parse(localStorage.getItem("employees") || "[]");
+    const updatedEmployees = employees.map((emp: any) =>
+      emp.email === loggedInUser?.email ? editedProfile : emp
+    );
+
+    localStorage.setItem("employees", JSON.stringify(updatedEmployees));
+    sessionStorage.setItem("loggedInUser", JSON.stringify(editedProfile));
+
+    setLoggedInUser(editedProfile);
+    setIsEditing(false);
+    alert("Profile updated successfully!");
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedProfile(loggedInUser || editedProfile);
+  };
+
+  if (!loggedInUser) return null;
 
   return (
     <div className="w-full min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-4xl font-bold text-center mb-8">Employee Profiles</h1>
-      {employees.length === 0 ? (
-        <p className="text-center text-gray-400">No employees found. Please register first.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {employees.map((employee, index) => (
-            <div
-              key={index}
-              className="bg-gray-800 p-6 rounded-lg shadow-lg relative group"
+      <h1 className="text-4xl font-bold text-center mb-8">Your Profile</h1>
+      <div className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
+        {isEditing ? (
+          <>
+            <input
+              type="text"
+              value={editedProfile.name}
+              onChange={(e) =>
+                setEditedProfile({ ...editedProfile, name: e.target.value })
+              }
+              placeholder="Name"
+              className="w-full px-4 py-2 mb-3 bg-gray-700 rounded-md text-white"
+            />
+            <input
+              type="email"
+              value={editedProfile.email}
+              onChange={(e) =>
+                setEditedProfile({ ...editedProfile, email: e.target.value })
+              }
+              placeholder="Email"
+              className="w-full px-4 py-2 mb-3 bg-gray-700 rounded-md text-white"
+              disabled
+            />
+            <input
+              type="text"
+              value={editedProfile.mobile}
+              onChange={(e) =>
+                setEditedProfile({ ...editedProfile, mobile: e.target.value })
+              }
+              placeholder="Mobile"
+              className="w-full px-4 py-2 mb-3 bg-gray-700 rounded-md text-white"
+            />
+            <select
+              value={editedProfile.designation}
+              onChange={(e) =>
+                setEditedProfile({
+                  ...editedProfile,
+                  designation: e.target.value,
+                })
+              }
+              className="w-full px-4 py-2 mb-3 bg-gray-700 rounded-md text-white"
             >
-              <h2 className="text-2xl font-semibold">{employee.name}</h2>
-              <p className="text-sm text-gray-400 mt-1">{employee.email}</p>
-              <p className="text-sm text-gray-400 mt-1">Mobile: {employee.mobile}</p>
-              <p className="text-sm text-gray-400 mt-1">Designation: {employee.designation}</p>
-              <p
-                className={`mt-4 inline-block px-3 py-1 rounded-full text-xs ${
-                  employee.status === "active"
-                    ? "bg-green-600 text-green-100"
-                    : "bg-red-600 text-red-100"
-                }`}
-              >
-                {employee.status.toUpperCase()}
-              </p>
-              <button
-                onClick={() => handleDelete(index)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-opacity"
-                title="Delete Employee"
-              >
-                Delete My Profile
-              </button>
-              <button
-                onClick={() => handleEdit(index)}
-                className="mt-4 w-full px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg"
-              >
-                Edit My Profile
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Edit Profile Modal */}
-      {editIndex !== null && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-[90%] md:w-[30rem]">
-            <h2 className="text-2xl font-bold mb-4 text-center">Edit Profile</h2>
-            <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleFormChange}
-                placeholder="Name"
-                className="w-full px-4 py-2 rounded bg-gray-700 text-white"
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleFormChange}
-                placeholder="Email"
-                className="w-full px-4 py-2 rounded bg-gray-700 text-white"
-                required
-              />
-              <input
-                type="text"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleFormChange}
-                placeholder="Mobile"
-                className="w-full px-4 py-2 rounded bg-gray-700 text-white"
-                required
-              />
-              <select
-                name="designation"
-                value={formData.designation}
-                onChange={handleFormChange}
-                className="w-full px-4 py-2 rounded bg-gray-700 text-white"
-                required
-              >
-                <option value="" disabled>
-              Select Designation
-            </option>
+               <option value="" disabled>Select Designation</option>
             <option value="Developer">Developer</option>
             <option value="Designer">Designer</option>
             <option value="Manager">Manager</option>
             <option value="Teacher">Teacher</option>
             <option value="other">Other</option>
-              </select>
-
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleFormChange}
-                className="w-full px-4 py-2 rounded bg-gray-700 text-white"
-                required
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-              <button
-                type="submit"
-                className="w-full py-2 mt-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg"
-              >
-                Save Changes
-              </button>
-            </form>
-            <button
-              onClick={() => setEditIndex(null)}
-              className="mt-4 w-full py-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-lg"
+            </select>
+            <select
+              value={editedProfile.status}
+              onChange={(e) =>
+                setEditedProfile({
+                  ...editedProfile,
+                  status: e.target.value as "active" | "inactive", // Explicitly cast to the union type
+                })
+              }
+              className="w-full px-4 py-2 mb-3 bg-gray-700 rounded-md text-white"
             >
-              Cancel
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            <div className="flex gap-4">
+              <button
+                onClick={handleSave}
+                className="w-full px-4 py-2 bg-green-600 rounded-md hover:bg-green-500"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCancel}
+                className="w-full px-4 py-2 bg-gray-600 rounded-md hover:bg-gray-500"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold">{loggedInUser.name}</h2>
+            <p className="text-sm text-gray-400 mt-1">
+              Email: {loggedInUser.email}
+            </p>
+            <p className="text-sm text-gray-400 mt-1">
+              Mobile: {loggedInUser.mobile}
+            </p>
+            <p className="text-sm text-gray-400 mt-1">
+              Designation: {loggedInUser.designation}
+            </p>
+            <p
+              className={`mt-4 inline-block px-3 py-1 rounded-full text-xs ${
+                loggedInUser.status === "active"
+                  ? "bg-green-600 text-green-100"
+                  : "bg-red-600 text-red-100"
+              }`}
+            >
+              {loggedInUser.status.toUpperCase()}
+            </p>
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={handleEdit}
+                className="w-full px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-500"
+              >
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="w-full px-4 py-2 bg-red-600 rounded-md hover:bg-red-500"
+              >
+                Delete
+              </button>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full mt-4 px-4 py-2 bg-gray-600 rounded-md hover:bg-gray-500"
+            >
+              Logout
             </button>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

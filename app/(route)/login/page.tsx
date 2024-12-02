@@ -23,7 +23,10 @@ const LoginPage = () => {
     if (user) {
       setError(null);
       alert("Login successful!");
-      
+
+      // Store the logged-in user's email in sessionStorage
+      sessionStorage.setItem("loggedInUser", JSON.stringify(user));
+
       // Navigate to the profile page
       router.push("/profile");
     } else {

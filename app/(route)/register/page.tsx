@@ -1,9 +1,12 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 import Link from "next/link";
 import { SparklesCore } from "../../components/ui/sparkles";
 
 const Page = () => {
+  const router = useRouter(); // Initialize useRouter
+
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [mobile, setMobile] = useState<string>("");
@@ -11,30 +14,47 @@ const Page = () => {
   const [designation, setDesignation] = useState<string>("");
   const [status, setStatus] = useState<"active" | "inactive">("active");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateEmail = (email: string): boolean => /\S+@\S+\.\S+/.test(email);
+  const validateMobile = (mobile: string): boolean => /^\d{10}$/.test(mobile);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!name) {
       setError("Please enter your name.");
+      setLoading(false);
       return;
     }
     if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
+      setLoading(false);
       return;
     }
-    if (!mobile) {
-      setError("Please enter your mobile number.");
+    if (!validateMobile(mobile)) {
+      setError("Please enter a valid 10-digit mobile number.");
+      setLoading(false);
       return;
     }
     if (!password) {
       setError("Please enter your password.");
+      setLoading(false);
       return;
     }
     if (!designation) {
       setError("Please select your designation.");
+      setLoading(false);
+      return;
+    }
+
+    // Check if email already exists
+    const existingEmployees: Array<typeof employee> = JSON.parse(localStorage.getItem("employees") || "[]");
+    const emailExists = existingEmployees.some((emp) => emp.email === email);
+    if (emailExists) {
+      setError("Email is already registered.");
+      setLoading(false);
       return;
     }
 
@@ -49,15 +69,8 @@ const Page = () => {
       status,
     };
 
-    // Retrieve existing data from local storage
-    const existingEmployees: Array<typeof employee> = JSON.parse(
-      localStorage.getItem("employees") || "[]"
-    );
-
     // Add new employee
     existingEmployees.push(employee);
-
-    // Save updated data back to local storage
     localStorage.setItem("employees", JSON.stringify(existingEmployees));
 
     alert("Employee registered successfully!");
@@ -69,6 +82,10 @@ const Page = () => {
     setPassword("");
     setDesignation("");
     setStatus("active");
+    setLoading(false);
+
+    // Redirect to the livestatus page
+    router.push("/livestatus");
   };
 
   return (
@@ -119,9 +136,7 @@ const Page = () => {
             onChange={(e) => setDesignation(e.target.value)}
             className="w-full px-4 py-2 bg-gray-800 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="" disabled>
-              Select Designation
-            </option>
+            <option value="" disabled>Select Designation</option>
             <option value="Developer">Developer</option>
             <option value="Designer">Designer</option>
             <option value="Manager">Manager</option>
@@ -154,8 +169,9 @@ const Page = () => {
           <button
             type="submit"
             className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 rounded-md text-white font-medium transition"
+            disabled={loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
           <p className="text-center text-sm mt-4">
             Already have an account?{" "}
