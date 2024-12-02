@@ -42,7 +42,7 @@ const ProfilePage = () => {
   const handleLogout = () => {
     sessionStorage.removeItem("loggedInUser");
     alert("Logged out successfully!");
-    router.push("/login");
+    router.push("/livestatus");
   };
 
   const handleDelete = () => {
