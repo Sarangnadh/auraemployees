@@ -21,9 +21,9 @@ const Page = () => {
   }, []);
 
   const getStatusColor = (status: string) => {
-    if (status === "active") {
+    if (status === "Active") {
       return "bg-green-500"; 
-    } else if (status === "inactive") {
+    } else if (status === "Inactive") {
       return "bg-red-500"; 
     }
     return "bg-gray-500"; 

@@ -8,7 +8,7 @@ const ProfilePage = () => {
     email: string;
     mobile: string;
     designation: string;
-    status: "active" | "inactive";
+    status: "Active" | "Inactive";
   } | null>(null);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -17,13 +17,13 @@ const ProfilePage = () => {
     email: string;
     mobile: string;
     designation: string;
-    status: "active" | "inactive";
+    status: "Active" | "Inactive";
   }>({
     name: "",
     email: "",
     mobile: "",
     designation: "",
-    status: "active", // Ensure the default value matches the union type
+    status: "Active", // Ensure the default value matches the union type
   });
 
   const router = useRouter();
@@ -137,13 +137,13 @@ const ProfilePage = () => {
               onChange={(e) =>
                 setEditedProfile({
                   ...editedProfile,
-                  status: e.target.value as "active" | "inactive", // Explicitly cast to the union type
+                  status: e.target.value as "Active" | "Inactive", // Explicitly cast to the union type
                 })
               }
               className="w-full px-4 py-2 mb-3 bg-gray-700 rounded-md text-white"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
             </select>
             <div className="flex gap-4">
               <button
@@ -174,7 +174,7 @@ const ProfilePage = () => {
             </p>
             <p
               className={`mt-4 inline-block px-3 py-1 rounded-full text-xs ${
-                loggedInUser.status === "active"
+                loggedInUser.status === "Active"
                   ? "bg-green-600 text-green-100"
                   : "bg-red-600 text-red-100"
               }`}

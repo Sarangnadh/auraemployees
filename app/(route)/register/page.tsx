@@ -12,7 +12,7 @@ const Page = () => {
   const [mobile, setMobile] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [designation, setDesignation] = useState<string>("");
-  const [status, setStatus] = useState<"active" | "inactive">("active");
+  const [status, setStatus] = useState<"Active" | "Inactive">("Active");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -81,7 +81,7 @@ const Page = () => {
     setMobile("");
     setPassword("");
     setDesignation("");
-    setStatus("active");
+    setStatus("Active");
     setLoading(false);
 
     // Redirect to the livestatus page
@@ -148,9 +148,9 @@ const Page = () => {
             <div className="flex items-center space-x-2">
               <input
                 type="radio"
-                value="active"
-                checked={status === "active"}
-                onChange={() => setStatus("active")}
+                value="Active"
+                checked={status === "Active"}
+                onChange={() => setStatus("Active")}
                 className="text-indigo-500 focus:ring-indigo-500"
               />
               <label className="text-sm text-gray-400">Active</label>
@@ -158,9 +158,9 @@ const Page = () => {
             <div className="flex items-center space-x-2">
               <input
                 type="radio"
-                value="inactive"
-                checked={status === "inactive"}
-                onChange={() => setStatus("inactive")}
+                value="Inactive"
+                checked={status === "Inactive"}
+                onChange={() => setStatus("Inactive")}
                 className="text-indigo-500 focus:ring-indigo-500"
               />
               <label className="text-sm text-gray-400">Inactive</label>
